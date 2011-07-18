@@ -204,7 +204,7 @@ namespace protocol
     {
         IUdpBufferStream is(&buffer);
         IUdpArchive ia(buffer);
-        if (action >= 0x50 && action < 0x60)
+        if ((action >= 0x50 && action < 0x60) || (action >= 0xC0 && action < 0xD0))
         {
             // 处理PeerPacket协议族
             if (bytes_left < 6)
