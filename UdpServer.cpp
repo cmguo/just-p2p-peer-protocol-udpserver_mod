@@ -80,6 +80,8 @@ namespace protocol
         , handler_(handler)
         , port_(0)
         , minimal_protocol_version_(0)
+        , old_handle_count_(0)
+        , new_handle_count_(0)
     {
     }
 
@@ -105,7 +107,12 @@ namespace protocol
     boost::uint32_t UdpServer::Recv(
         boost::uint32_t count)
     {
-        boost::uint32_t i = 0;
+        new_handle_count_ = count;
+        boost::uint32_t i = old_handle_count_;
+        if (old_handle_count_ < new_handle_count_)
+        {
+            old_handle_count_ = new_handle_count_;
+        }
         for (; i < count; ++i) {
             UdpBuffer * recv_buffer = new UdpBuffer;
             if (!recv_buffer) {
@@ -196,7 +203,16 @@ namespace protocol
             }
         }
         recv_buffer.reset();
-        UdpRecvFrom(recv_buffer);
+
+        if (old_handle_count_ <= new_handle_count_)
+        {
+            UdpRecvFrom(recv_buffer);
+        }
+        else
+        {
+            delete &recv_buffer;
+            --old_handle_count_;
+        }
     }
 
     bool UdpServer::get_protocol_version(UdpBuffer & buffer, boost::uint32_t bytes_left,
