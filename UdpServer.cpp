@@ -143,7 +143,7 @@ namespace protocol
                 boost::ref(recv_buffer)));
     }
 
-    void UdpServer::AddCheckSum(boost::asio::const_buffers_3& buffers, boost::uint16_t dest_protocol_version)
+    void UdpServer::AddCheckSum(boost::asio::const_buffers_3 buffers, boost::uint16_t dest_protocol_version)
     {
         boost::uint32_t & chk_sum = const_cast<boost::uint32_t &>(
             *boost::asio::buffer_cast<boost::uint32_t const *>(*buffers.begin()));
