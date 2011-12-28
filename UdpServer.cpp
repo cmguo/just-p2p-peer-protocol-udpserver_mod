@@ -143,22 +143,36 @@ namespace protocol
                 boost::ref(recv_buffer)));
     }
 
-    void UdpServer::UdpSendTo(
-        boost::shared_ptr<UdpBuffer> send_buffer,
-        boost::uint16_t dest_protocol_version)
+    void UdpServer::AddCheckSum(boost::asio::const_buffers_3& buffers, boost::uint16_t dest_protocol_version)
     {
-        // check sum
         boost::uint32_t & chk_sum = const_cast<boost::uint32_t &>(
-            *boost::asio::buffer_cast<boost::uint32_t const *>(*send_buffer->data().begin()));
+            *boost::asio::buffer_cast<boost::uint32_t const *>(*buffers.begin()));
 
         if (dest_protocol_version < PEER_VERSION_V5)
         {
-            chk_sum = check_sum_old(util::buffers::sub_buffers(send_buffer->data(), 4));
+            chk_sum = check_sum_old(util::buffers::sub_buffers(buffers, 4));
         }
         else
         {
-            chk_sum = check_sum_new(util::buffers::sub_buffers(send_buffer->data(), 4));
+            chk_sum = check_sum_new(util::buffers::sub_buffers(buffers, 4));
         }
+    }
+
+    void UdpServer::UdpSendTo(
+        const UdpBuffer & send_buffer,
+        boost::uint16_t dest_protocol_version)
+    {
+        AddCheckSum(send_buffer.data(), dest_protocol_version);
+
+        boost::system::error_code ec;
+        send_to(send_buffer.data(), send_buffer.end_point(), 0, ec);
+    }
+
+    void UdpServer::UdpAsyncSendTo(
+        boost::shared_ptr<UdpBuffer> send_buffer,
+        boost::uint16_t dest_protocol_version)
+    {
+        AddCheckSum(send_buffer->data(), dest_protocol_version);
 
         async_send_to(send_buffer->data(), send_buffer->end_point(),
             boost::bind(&UdpServer::HandleUdpSendTo, ref_this(),
