@@ -321,5 +321,6 @@ namespace protocol
         boost::system::error_code error;
         close(error);
         handler_ = NULL;
+        packet_handlers_.clear();
     }
 }
