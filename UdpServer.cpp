@@ -12,7 +12,6 @@
 using namespace framework::logger;
 
 #include <boost/bind.hpp>
-#include <boost/ref.hpp>
 #include <boost/asio/placeholders.hpp>
 
 #include "protocol/CheckSum.h"
@@ -137,7 +136,7 @@ namespace protocol
             recv_buffer.prepare(),
             recv_buffer.end_point(),
             boost::bind(&UdpServer::HandleUdpRecvFrom,
-                ref_this(),
+                shared_from_this(),
                 boost::asio::placeholders::error,
                 boost::asio::placeholders::bytes_transferred,
                 boost::ref(recv_buffer)));
@@ -175,7 +174,7 @@ namespace protocol
         AddCheckSum(send_buffer->data(), dest_protocol_version);
 
         async_send_to(send_buffer->data(), send_buffer->end_point(),
-            boost::bind(&UdpServer::HandleUdpSendTo, ref_this(),
+            boost::bind(&UdpServer::HandleUdpSendTo, shared_from_this(),
             boost::asio::placeholders::error,
             boost::asio::placeholders::bytes_transferred,
             send_buffer));
@@ -320,6 +319,6 @@ namespace protocol
     {
         boost::system::error_code error;
         close(error);
-        handler_ = NULL;
+        handler_.reset();
     }
 }
