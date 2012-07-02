@@ -314,5 +314,6 @@ namespace protocol
         boost::system::error_code error;
         close(error);
         handler_.reset();
+        packet_handlers_.clear();
     }
 }
