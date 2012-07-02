@@ -7,9 +7,6 @@
 #include <util/buffers/BufferCopy.h>
 
 #include <framework/system/BytesOrder.h>
-#include <framework/logger/Logger.h>
-#include <framework/logger/LoggerStreamRecord.h>
-using namespace framework::logger;
 
 #include <boost/bind.hpp>
 #include <boost/asio/placeholders.hpp>
@@ -18,8 +15,6 @@ using namespace framework::logger;
 
 namespace protocol
 {
-    FRAMEWORK_LOGGER_DECLARE_MODULE("UdpServer");
-
     inline boost::uint32_t read_uint32(
         boost::uint32_t const *& buf,
         boost::uint32_t & vt,
@@ -219,7 +214,6 @@ namespace protocol
             }
             else 
             {
-                LOG_S(Logger::kLevelAlarm, "HandleUdpRecvFrom: unknown action " << action);
             }
         }
         recv_buffer.reset();
