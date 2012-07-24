@@ -82,12 +82,22 @@ namespace protocol
     bool UdpServer::Listen(
         boost::uint16_t port)
     {
+       return Listen("0.0.0.0",port);
+    }
+
+    bool UdpServer::Listen(const std::string& ip,boost::uint16_t port)
+    {
         boost::system::error_code error;
         open(boost::asio::ip::udp::v4(), error);
         if (error) {
             return false;
         }
-        boost::asio::ip::udp::endpoint ep(boost::asio::ip::udp::v4(), port);
+
+        boost::asio::ip::address_v4 av4;
+        av4 = boost::asio::ip::address_v4::from_string(ip);
+
+        boost::asio::ip::udp::endpoint ep(boost::asio::ip::address(av4),port);
+
         bind(ep, error);
         if (error) {
             close(error);
