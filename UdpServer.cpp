@@ -195,8 +195,11 @@ namespace protocol
         boost::uint32_t bytes_transferred,
         UdpBuffer & recv_buffer)
     {
-        if (!handler_) {
+        if (!handler_)
+        {
+#ifndef PEER_PC_CLIENT
             delete &recv_buffer;
+#endif
             return;
         }
 
