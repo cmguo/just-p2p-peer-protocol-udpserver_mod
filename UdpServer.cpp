@@ -197,9 +197,7 @@ namespace protocol
     {
         if (!handler_)
         {
-#ifdef PEER_PC_CLIENT
             delete &recv_buffer;
-#endif
             return;
         }
 
