@@ -186,7 +186,7 @@ namespace protocol
     }
 
     void UdpServer::HandleUdpSendTo(const boost::system::error_code & error,
-        uint32_t bytes_transferred, boost::shared_ptr<UdpBuffer> send_buffer)
+        boost::uint32_t bytes_transferred, boost::shared_ptr<UdpBuffer> send_buffer)
     {
     }
 
