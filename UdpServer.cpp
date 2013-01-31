@@ -218,6 +218,15 @@ namespace protocol
                     is.unget(); // 将action放回Buffer中
                     if (verify_check_sum(recv_buffer, chk_sum, protocol_version)) 
                     {
+                        if (action == 0x54)
+                        {
+                            util::buffers::buffer_copy(
+                                boost::asio::buffer(backup_buffer_, sizeof(backup_buffer_)),
+                                recv_buffer.data());
+
+                            backup_length_ = recv_buffer.size();
+                        }
+
                         is.get(); // 将action从Buffer中读出，下面的handle函数只序列化action后面的字段
                         (this->*iter->second)(recv_buffer);
                     }
