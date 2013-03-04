@@ -13,6 +13,9 @@
 
 #include "protocol/CheckSum.h"
 
+boost::uint32_t backup_length_;
+boost::uint8_t backup_buffer_[2048];
+
 namespace protocol
 {
     inline boost::uint32_t read_uint32(
